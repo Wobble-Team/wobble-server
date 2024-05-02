@@ -11,8 +11,16 @@ const redirect_uri: string = process.env.REDIRECT_URI || "";
 const router = express();
 
 function generateRandomString(length: number): string {
-  // Function implementation for generating random string
-  return ""; // Implement your logic here
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
 }
 
 router.get("/login", function (req: Request, res: Response) {
