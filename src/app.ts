@@ -1,33 +1,10 @@
-import express from "express";
-import morgan from "morgan";
-import helmet from "helmet";
-import cors from "cors";
+import app from "./config/express"; // how it loads routes to apps
+const port = process.env.PORT || 8456;
 
-import * as middlewares from "./middlewares";
-import api from "./api";
-import auth from "./auth";
-import MessageResponse from "./interfaces/MessageResponse";
-
-require("dotenv").config();
-
-const app = express();
-
-app.use(morgan("dev"));
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-
-app.get<{}, MessageResponse>("/", (req, res) => {
-  res.json({
-    message: "👋 Response From Server! ",
-  });
+app.listen(port, () => {
+  /* eslint-disable no-console */
+  console.log(`Listening: http://localhost:${port}`);
+  /* eslint-enable no-console */
 });
-
-app.use("/api/v1", api);
-
-app.use("/auth", auth);
-
-app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
 
 export default app;
