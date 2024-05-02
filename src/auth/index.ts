@@ -1,10 +1,12 @@
 import express, { Request, Response } from "express";
 import querystring from "querystring";
 import axios from "axios";
+require("dotenv").config(); // Load .env variables into process.env
 
-const client_id: string = "cfb6527559bb4ffb800ccf1391ed7fc0";
-const client_secret: string = "c9652eb162cc42b7a250833d804b06fa";
-const redirect_uri: string = "http://localhost:8456/auth/callback";
+// Access the variables using process.env
+const client_id: string = process.env.CLIENT_ID || "";
+const client_secret: string = process.env.CLIENT_SECRET || "";
+const redirect_uri: string = process.env.REDIRECT_URI || "";
 
 const router = express();
 
