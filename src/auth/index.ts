@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
 import querystring from "querystring";
 import axios from "axios";
-require("dotenv").config(); // Load .env variables into process.env
+require("dotenv").config();
+
+//TEST
 
 // Access the variables using process.env
 const client_id: string = process.env.CLIENT_ID || "";
