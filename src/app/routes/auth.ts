@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import querystring from "querystring";
 import axios from "axios";
+import config from "../../config/config"
 require("dotenv").config();
 
 // Access the variables using process.env
@@ -27,7 +28,7 @@ router.get("/login", function (req: Request, res: Response) {
   const state: string = generateRandomString(16);
   const scope: string = "user-read-private user-read-email";
 
-  res.redirect(
+  const authorizationUrl =
     "https://accounts.spotify.com/authorize?" +
       querystring.stringify({
         response_type: "code",
@@ -36,7 +37,8 @@ router.get("/login", function (req: Request, res: Response) {
         redirect_uri: redirect_uri,
         state: state,
       })
-  );
+      console.log(authorizationUrl)
+      res.redirect(authorizationUrl)
 });
 
 async function getProfile(accessToken: string | null) {
@@ -45,27 +47,50 @@ async function getProfile(accessToken: string | null) {
     console.error("Access token not provided");
     return null;
   }
-
+  console.log(accessToken)
   try {
-    const response = await fetch("https://api.spotify.com/v1/me", {
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    });
+    const response = await axios.get("https://api.spotify.com/v1/me", {
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  });
 
-    if (!response.ok) {
+    if (response.status < 200 || response.status >= 300) {
       // Handle HTTP error responses
       throw new Error("Failed to fetch profile data");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.data;
   } catch (error) {
     // Handle any other errors that might occur during the request
     console.error("Error:", error);
     return null;
   }
 }
+
+router.get("/refreshTokens", async function (req: Request, res: Response) {
+  const authOptions = {
+    url: "https://accounts.spotify.com/api/token",
+    method: "POST", // Ensure the method is set to POST
+    data: {
+      client_id: client_id,
+      refresh_token: config.refreshToken,
+      grant_type: 'refresh_token',
+    },
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        Buffer.from(client_id + ":" + client_secret).toString("base64"),
+    },
+  };
+  const response = await axios(authOptions);
+  config.accessToken = response.data.access_token;
+  config.refreshToken = response.data.refresh_token;
+
+  console.log(config)
+  res.status(200).json("updated tokens hopefully")
+});
 
 router.get("/callback", async function (req: Request, res: Response) {
   const code: string | null = (req.query.code as string) || null;
@@ -98,7 +123,8 @@ router.get("/callback", async function (req: Request, res: Response) {
     try {
       // Send the POST request using Axios
       const response = await axios(authOptions);
-
+      config.accessToken = response.data.access_token;
+      config.refreshToken = response.data.refresh_token;
       // For demonstration, let's send a response back to the client with a success message
 
       const profile_data = await getProfile(response.data.access_token);
