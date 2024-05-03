@@ -13,7 +13,7 @@ const router = express();
 
 function generateRandomString(length: number): string {
   const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
 
   for (let i = 0; i < length; i++) {
