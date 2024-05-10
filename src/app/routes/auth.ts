@@ -12,7 +12,7 @@ const redirect_uri: string = process.env.REDIRECT_URI || "";
 
 const router = express();
 
-router.get("/login", function (req: Request, res: Response) {
+router.get("/login", async function (req: Request, res: Response) {
   const state: string = generateRandomString(16);
   const scope: string = "user-read-private user-read-email user-top-read";
 
@@ -26,7 +26,8 @@ router.get("/login", function (req: Request, res: Response) {
         state: state,
       })
       console.log(authorizationUrl)
-      res.redirect(authorizationUrl)
+      res.send(authorizationUrl)
+      // res.redirect(authorizationUrl)
 });
 
 async function getProfile(accessToken: string | null) {
