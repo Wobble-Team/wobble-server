@@ -3,4 +3,5 @@ export default interface AppConfig {
     refresh_token?: string; //can get new accesstokens from refreshTokens
     // Add other properties as needed
     env_type?: string;
+    mongodb_uri?: string;
   }

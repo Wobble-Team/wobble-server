@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
-import config from "../../config/config"
+import config from "../../config/config";
 
 const router = express.Router();
 
